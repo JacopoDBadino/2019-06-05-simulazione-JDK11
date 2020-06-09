@@ -5,8 +5,16 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
+import it.polito.tdp.crimes.model.Adiacenza;
+import it.polito.tdp.crimes.model.Distretto;
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +33,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
     private ComboBox<?> boxMese; // Value injected by FXMLLoader
@@ -47,6 +55,27 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
+    	
+    	try {
+    		
+    		model.creaGrafo(boxAnno.getValue());
+    		List<Distretto> vertici = new ArrayList<Distretto>();
+    		for (Distretto d : model.getGrafo().vertexSet())
+    			vertici.add(d);
+    		Collections.sort(vertici);
+    		
+    		for (Distretto d : vertici) {
+    			txtResult.appendText(String.format("Vicini del distretto n. %d:\n", d.getId()));
+    			for (Adiacenza a : model.getNeighbours(d))
+    				txtResult.appendText(String.format("Distetto %d, distante %2f\n", a.getD2().getId(), a.getPeso()));
+    			
+    			txtResult.appendText("\n");
+    		}
+    			
+    		
+    	} catch (Exception e) {
+    		
+    	}
 
     }
 
@@ -69,5 +98,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxAnno.getItems().addAll(model.getYears());
     }
 }
