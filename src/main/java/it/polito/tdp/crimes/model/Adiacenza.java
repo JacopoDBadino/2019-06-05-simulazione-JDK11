@@ -27,7 +27,10 @@ public class Adiacenza implements Comparable<Adiacenza> {
 	@Override
 	public int compareTo(Adiacenza o) {
 		// TODO Auto-generated method stub
-		return -(int) (peso-o.getPeso());
+		if (peso - o.getPeso() < 0)
+			return -1;
+		else
+			return 1;
 	}
 
 }

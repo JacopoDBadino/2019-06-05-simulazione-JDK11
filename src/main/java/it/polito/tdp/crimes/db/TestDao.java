@@ -6,8 +6,7 @@ public class TestDao {
 
 	public static void main(String[] args) {
 		EventsDao dao = new EventsDao();
-		for(Distretto e : dao.getDistricts(2017))
-			System.out.println(e);
+		System.out.println(dao.getWorstDistrictsIds(2017).get(0));
 	}
 
 }

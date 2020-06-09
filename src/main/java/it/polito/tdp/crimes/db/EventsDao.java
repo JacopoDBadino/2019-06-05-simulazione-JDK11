@@ -149,4 +149,37 @@ public class EventsDao {
 		return list;
 	}
 
+	public List<Integer> getWorstDistrictsIds(int anno) {
+		String sql = "SELECT district_id AS id, COUNT(*) AS cnt from EVENTS WHERE YEAR(reported_date) = ? GROUP BY district_id ORDER BY cnt desc";
+		try {
+			Connection conn = DBConnect.getConnection();
+
+			PreparedStatement st = conn.prepareStatement(sql);
+			
+			st.setInt(1, anno);
+
+			List<Integer> list = new ArrayList<>();
+
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				try {
+
+					list.add(res.getInt("id"));
+
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+
+			conn.close();
+			return list;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

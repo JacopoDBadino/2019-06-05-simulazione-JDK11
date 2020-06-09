@@ -56,4 +56,13 @@ public class Model {
 
 	}
 
+	public Distretto getWorst(int anno) {
+		List<Integer> data = dao.getWorstDistrictsIds(anno);
+		for (Distretto d : this.grafo.vertexSet())
+			if (d.getId() == data.get(0))
+				return d;
+
+		return null;
+	}
+
 }
