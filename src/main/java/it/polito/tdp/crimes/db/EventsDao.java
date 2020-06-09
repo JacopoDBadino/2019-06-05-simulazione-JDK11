@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polito.tdp.crimes.model.Crimine;
 import it.polito.tdp.crimes.model.Distretto;
 import it.polito.tdp.crimes.model.Event;
 
@@ -150,12 +151,12 @@ public class EventsDao {
 	}
 
 	public List<Integer> getWorstDistrictsIds(int anno) {
-		String sql = "SELECT district_id AS id, COUNT(*) AS cnt from EVENTS WHERE YEAR(reported_date) = ? GROUP BY district_id ORDER BY cnt desc";
+		String sql = "SELECT district_id AS id, COUNT(*) AS cnt from EVENTS WHERE YEAR(reported_date) = ? GROUP BY district_id ORDER BY cnt";
 		try {
 			Connection conn = DBConnect.getConnection();
 
 			PreparedStatement st = conn.prepareStatement(sql);
-			
+
 			st.setInt(1, anno);
 
 			List<Integer> list = new ArrayList<>();
@@ -166,6 +167,42 @@ public class EventsDao {
 				try {
 
 					list.add(res.getInt("id"));
+
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+
+			conn.close();
+			return list;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<Crimine> getCrimini(int anno, int mese, int giorno) {
+		String sql = "SELECT district_id AS place, offense_category_id AS type, reported_date AS date FROM EVENTS WHERE YEAR(reported_date) = ? AND MONTH(reported_date) = ? AND DAY(reported_date) = ? ORDER BY reported_date";
+		List<Crimine> list = new ArrayList<Crimine>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+
+			PreparedStatement st = conn.prepareStatement(sql);
+
+			st.setInt(1, anno);
+			st.setInt(2, mese);
+			st.setInt(3, giorno);
+
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				try {
+					Crimine c = new Crimine(res.getInt("place"), res.getTimestamp("date").toLocalDateTime(),
+							res.getString("type"));
+					list.add(c);
 
 				} catch (Throwable t) {
 					t.printStackTrace();
